@@ -80,7 +80,7 @@ const Login = () => {
             <FcGoogle size={35} />
           </div>
         </button>
-        <button onClick={kakaoHandler}>
+          <button onClick={kakaoHandler}>
           <div className='kakao'>
             <img src={kakao} width='35px' alt='kakaoLogo' />
           </div>
