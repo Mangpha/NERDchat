@@ -10,8 +10,7 @@ const io = require('socket.io')(httpServer, {
   cors: {
     origin: true,
     credentials: true,
-    methods: ['GET', 'POST', 'OPTIONS', 'HEAD'],
-    allowedHeaders: true
+    methods: ['GET', 'POST', 'OPTIONS', 'HEAD']
   }
 });
 const PORT = process.env.PORT || 8080;
@@ -23,18 +22,16 @@ app.use(
   cors({
     origin: true,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: true,
-    exposedHeaders: true
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH']
   })
 );
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => res.send('Hello, world!!!!!!'));
 app.get('/header', (req, res) => {
-  console.log(req.headers);
+  console.log(req.body);
   res.json(req.headers);
 });
 
