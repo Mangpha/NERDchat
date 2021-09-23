@@ -1,19 +1,48 @@
+const { Users, GameChatRooms, Messages } = require('../models');
+
 module.exports = (socket) => {
-  socket.on('joinRoom', async (uuid, userData, msgData) => {
-    const { id, userId, avatar, nickname } = userData;
-    socket.join(uuid);
+  const ns = socket.nsp;
+  socket.on('joinRoom', async (roomUid, voiceChatUid, userData) => {
     // search User and Update User ` currentRoom ` Column
-    socket.to(uuid).emit('welcomeRoom', userData, msgData);
+    try {
+      const { id, userId, avatar, nicsocketname } = userData;
+      await Users.update({
+        currentRoom: roomUid
+      }, {
+        where: { id, userId }
+      });
+      socket.join([roomUid, voiceChatUid]);
+      ns.to(roomUid).emit('welcomeRoom', userData, msgData);
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
   });
-  socket.on('voiceChat', (uuid, userData, peerId) => {
-    socket.broadcast.to(uuid).emit('userConnect', peerId);
+
+  socket.on('roomMessage', async (roomUid, roomId, userData, msgData) => {
+    try {
+      const { id, userId, avatar, nickname } = userData;
+      await Messages.create({
+        userId: id,
+        roomId,
+        message: msgData,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      ns.to(roomUid).emit('roomMessage', userData, msgData);
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  });
+  socket.on('voiceChat', (voiceChatUid, userData, peerId) => {
+    const { id, userId } = userData;
+    ns.broadcat.to(voiceChatUid).emit('userConnect', peerId);
     socket.on('disconnect', () => {
-      // search User and Update User ` currentRoom ` Column
-      socket.broadcast.to(uuid).emit('userDisconnect', peerId);
+      ns.broadcast.to(voiceChatUid).emit('userDisconnect', peerId);
     });
   });
-  socket.on('chatMessage', (uuid, userData, msgData) => {
-    // add Message Data => ` Message ` Table
-    socket.to(uuid).emit('chatMessage', userData, msgData);
+  socket.on('currentNSLength', () => {
+    ns.emit('currentNSLength', ns.adapter.sids.size);
   });
 };
