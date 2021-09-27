@@ -1,0 +1,35 @@
+$dark: rgb(23, 23, 23);
+$neonNain: rgb(184, 126, 255);
+$neonSer: rgb(163, 16, 255);
+
+.server__room__header__container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  gap: 1em;
+
+  .headCount__container {
+    color: white;
+  }
+}
+
+.back__icons {
+  position: absolute;
+  left: 0;
+  cursor: pointer;
+  display: flex;
+  color: white;
+  &:hover {
+    color: $neonSer;
+  }
+}
+
+.create__room {
+  border: none;
+  background: $neonSer;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  color: white;
+  border-radius: 0.3em;
+}

@@ -1,0 +1,200 @@
+$dark: rgb(23, 23, 23);
+$neonNain: rgb(184, 126, 255);
+$neonSer: rgb(163, 16, 255);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.modal__background {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.866);
+  border-radius: 15px;
+
+  .modal__wrapper {
+    position: relative;
+  }
+  .modal__context {
+    width: 400px;
+    z-index: 2;
+    padding: 2rem 1rem;
+    border-radius: 0.2em;
+    background: $dark;
+    color: rgb(172, 172, 172);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    position: relative;
+  }
+  .modal__logo {
+    z-index: 3;
+    width: 50px;
+    position: absolute;
+    top: -230px;
+    cursor: pointer;
+    stroke: $neonNain;
+    stroke-width: 8;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 0;
+    animation: flicker 2s linear infinite;
+    filter: drop-shadow(1px 1px 2px $neonSer);
+    fill: transparent;
+  }
+
+  .closeButton {
+    cursor: pointer;
+    z-index: 3;
+    position: absolute;
+    // margin: 0.3em;
+    top: 0px;
+    left: 100%;
+    margin-left: 0.5em;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    border-radius: 0.2em;
+    transition: all 0.1s ease-in;
+  }
+  .closeButton:hover {
+    background: $dark;
+  }
+  .closeIcon {
+    color: rgb(172, 172, 172);
+  }
+}
+
+@keyframes flicker {
+  from {
+    opacity: 1;
+  }
+
+  4% {
+    opacity: 0.9;
+  }
+
+  6% {
+    opacity: 0.85;
+  }
+
+  8% {
+    opacity: 0.95;
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  11% {
+    opacity: 0.922;
+  }
+
+  12% {
+    opacity: 0.7;
+  }
+
+  14% {
+    opacity: 0.1;
+  }
+
+  16% {
+    opacity: 0.98;
+  }
+
+  17% {
+    opacity: 0.9;
+  }
+
+  19% {
+    opacity: 0.93;
+  }
+
+  20% {
+    opacity: 0.99;
+  }
+
+  24% {
+    opacity: 1;
+  }
+
+  26% {
+    opacity: 0.94;
+  }
+
+  28% {
+    opacity: 0.98;
+  }
+
+  37% {
+    opacity: 0.93;
+  }
+
+  38% {
+    opacity: 0.2;
+  }
+
+  39% {
+    opacity: 0.96;
+  }
+
+  42% {
+    opacity: 1;
+  }
+
+  44% {
+    opacity: 0.97;
+  }
+
+  46% {
+    opacity: 0.94;
+  }
+
+  56% {
+    opacity: 0.9;
+  }
+
+  58% {
+    opacity: 0.9;
+  }
+
+  60% {
+    opacity: 0.99;
+  }
+
+  68% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0.9;
+  }
+
+  72% {
+    opacity: 0.95;
+  }
+
+  93% {
+    opacity: 0.93;
+  }
+
+  95% {
+    opacity: 0.95;
+  }
+
+  97% {
+    opacity: 0.93;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

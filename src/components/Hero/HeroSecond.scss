@@ -1,0 +1,132 @@
+@import url("https://fonts.googleapis.com/css2?family=Monoton&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap");
+
+@import "_color";
+
+.herosec-container {
+  height: 100vh;
+  display: flex;
+  justify-content: space-around;
+  margin-left: 100px;
+}
+.herosec-logoimage {
+  margin-left: 100px;
+}
+
+.text-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-left: 50px;
+}
+
+.text-ani span {
+  font-size: 2em;
+}
+
+.text-ani {
+  text-align: left;
+  font-family: "Monoton", cursive;
+  font-size: 25px;
+  letter-spacing: 1px;
+  color: rgb(172, 172, 172);
+  display: inline-block;
+  margin-top: 80px;
+  margin-right: 350px;
+}
+
+.sub-text .second-new {
+  text-align: justify;
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  width: 600px;
+  color: rgb(216, 216, 216);
+  margin-right: 260px;
+  font-size: 24px;
+}
+
+.first {
+  position: relative;
+  animation: bounce 0.5s ease-in-out infinite alternate;
+
+  &:hover {
+    filter: drop-shadow(0 0 1px $neonSer);
+    color: $neonNain;
+    transition: all 0.2s ease-in-out;
+    animation: flicker 2s linear infinite;
+    text-shadow: 0 0 3px rgb(163, 16, 255);
+  }
+}
+
+.sub-text-h1 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  color: rgb(216, 216, 216);
+  font-size: 24px;
+  width: 600px;
+  margin-right: 250px;
+}
+
+.text-ani .first:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.text-ani .first:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.text-ani .first:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.text-ani .first:nth-child(5) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0% {
+    top: 10px;
+  }
+
+  0% {
+    top: 5px;
+  }
+
+  40% {
+    top: -10px;
+  }
+
+  80% {
+    top: -10px;
+  }
+
+  90% {
+    top: -10px;
+  }
+
+  100% {
+    top: -10px;
+  }
+}
+
+.second-new {
+  margin-top: -40px;
+  font-weight: lighter;
+
+  &:hover {
+    filter: drop-shadow(0 0 1px $neonSer);
+    color: $neonNain;
+    transition: all 0.2s ease-in-out;
+    animation: flicker 2s linear infinite;
+    text-shadow: 0 0 3px rgb(163, 16, 255);
+  }
+}
+
+.second-fri {
+  margin-top: -40px;
+  font-weight: lighter;
+  &:hover {
+    filter: drop-shadow(0 0 1px $neonSer);
+    color: $neonNain;
+    transition: all 0.2s ease-in-out;
+    animation: flicker 2s linear infinite;
+    text-shadow: 0 0 3px rgb(163, 16, 255);
+  }
+}
