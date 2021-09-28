@@ -16,7 +16,6 @@ const roomMessageStore = new RedisRoomMessageStore(redisClient);
 module.exports = {
   socket: async (socket) => {
     const ns = socket.nsp;
-
     tokenStore.saveToken(socket.token, {
       userId: socket.userId,
       nickname: socket.nickname,
