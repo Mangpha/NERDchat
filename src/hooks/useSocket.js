@@ -11,21 +11,20 @@ const useSocket = (serverName, roomId, userInfo, audioList, audioRef) => {
   const [roomHeadCount, setRoomHeadCount] = useState(0);
   const [mic, setMic] = useState(true);
   const { nickname, userId } = userInfo;
-  console.log("This is userInfo", userId);
-
+  const [userList, setUserList] = useState([]);
   const users = [];
   let voiceChatUid = "";
   if (roomId) {
     voiceChatUid = roomId + "-vUid" + Math.floor(Math.random() * 100);
     // console.log("This is voiceChatUid, ", voiceChatUid);
   }
-  const addAudioStream = (audio, stream) => {
-    audio.srcObject = stream;
-    audio.addEventListener("loadedmetadata", () => {
-      audio.play();
-    });
-    audioList.current.append(audio);
-  };
+  // const addAudioStream = (audio, stream) => {
+  //   audio.srcObject = stream;
+  //   audio.addEventListener("loadedmetadata", () => {
+  //     audio.play();
+  //   });
+  //   audioList.current.append(audio);
+  // };
 
   const handleMuteMic = () => {
     setMic(!mic);
@@ -49,10 +48,11 @@ const useSocket = (serverName, roomId, userInfo, audioList, audioRef) => {
       });
     });
 
-    socket.current.auth = { nickname, userId };
-    socket.current.connect();
     if (token) {
-      socket.current.auth = { token };
+      socket.current.auth = { token, nickname, userId };
+      socket.current.connect();
+    } else {
+      socket.current.auth = { nickname, userId };
       socket.current.connect();
     }
 
@@ -69,6 +69,7 @@ const useSocket = (serverName, roomId, userInfo, audioList, audioRef) => {
       users.sort((a, b) => {
         return a - b;
       });
+      setUserList(users);
     });
 
     socket.current.on("user connected", (data) => {
@@ -80,6 +81,7 @@ const useSocket = (serverName, roomId, userInfo, audioList, audioRef) => {
         }
       }
       users.push(data);
+      // setUserList(users);
     });
 
     socket.current.on("user disconnected", (data) => {
@@ -90,6 +92,7 @@ const useSocket = (serverName, roomId, userInfo, audioList, audioRef) => {
           break;
         }
       }
+      // setUserList(users);
     });
 
     socket.current.on("welcomeRoom", (userData, msgData) =>
@@ -130,35 +133,35 @@ const useSocket = (serverName, roomId, userInfo, audioList, audioRef) => {
       });
     });
 
-    //Voice
-    if (voiceChatUid.length !== 0) {
-      navigator.mediaDevices
-        .getUserMedia({ video: false, audio: true })
-        .then((stream) => {
-          myPeer.on("open", (peerId) => {
-            socket.current.emit("voiceChat", voiceChatUid, userInfo, peerId);
-          });
-          addAudioStream(audioRef.current, stream);
-          myPeer.on("call", (call) => {
-            call.answer(stream);
-            const audio = document.createElement("audio");
-            audio.setAttribute("autoPlay", "playsInline");
-            call.on("stream", (userAudio) => {
-              addAudioStream(audio, userAudio);
-            });
-          });
-          socket.current.on("userConnect", (peerId) => {
-            const peerCall = myPeer.call(peerId, stream);
-            const audio = document.createElement("audio");
-            peerCall.on("stream", (userAudio) => {
-              addAudioStream(audio, userAudio);
-            });
-            peerCall.on("close", () => {
-              audio.remove();
-            });
-          });
-        });
-    }
+    // //Voice
+    // if (voiceChatUid.length !== 0) {
+    //   navigator.mediaDevices
+    //     .getUserMedia({ video: false, audio: true })
+    //     .then((stream) => {
+    //       myPeer.on("open", (peerId) => {
+    //         socket.current.emit("voiceChat", voiceChatUid, userInfo, peerId);
+    //       });
+    //       addAudioStream(audioRef.current, stream);
+    //       myPeer.on("call", (call) => {
+    //         call.answer(stream);
+    //         const audio = document.createElement("audio");
+    //         audio.setAttribute("autoPlay", "playsInline");
+    //         call.on("stream", (userAudio) => {
+    //           addAudioStream(audio, userAudio);
+    //         });
+    //       });
+    //       socket.current.on("userConnect", (peerId) => {
+    //         const peerCall = myPeer.call(peerId, stream);
+    //         const audio = document.createElement("audio");
+    //         peerCall.on("stream", (userAudio) => {
+    //           addAudioStream(audio, userAudio);
+    //         });
+    //         peerCall.on("close", () => {
+    //           audio.remove();
+    //         });
+    //       });
+    //     });
+    // }
 
     //현재 nameSpace 접속자 인원 받아오기
     socket.current.on("currentNSLength", (data) => {
@@ -171,7 +174,6 @@ const useSocket = (serverName, roomId, userInfo, audioList, audioRef) => {
     socket.current.on("currentRoomLength", (data) => {
       setRoomHeadCount(data);
     });
-
     return () => {
       socket.current.off("connect");
       socket.current.off("token");
@@ -205,7 +207,16 @@ const useSocket = (serverName, roomId, userInfo, audioList, audioRef) => {
     socket.current.emit("roomMessage", roomId, chatId, userInfo, newMsg);
   };
 
-  return { joinRoom, sendMessage, messages, nsHeadCount, users, handleMuteMic };
+  // console.log("This is useSocket users", userList);
+  return {
+    joinRoom,
+    sendMessage,
+    messages,
+    nsHeadCount,
+    users,
+    handleMuteMic,
+    userList,
+  };
 };
 
 export default useSocket;
