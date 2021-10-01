@@ -5,11 +5,10 @@ import socket from "./socket";
 function useDM(userInfo, to) {
   const [msg, setMsg] = useState([]);
   const userListRef = useRef([]);
-
   const { userId, nickname, avatar } = userInfo;
 
   useEffect(() => {
-    const token = localStorage.getItem("socketToken");
+    const token = localStorage.getItem(`socketToken${userId}`);
 
     if (token) {
       socket.auth = { token, nickname, userId, avatar };
@@ -22,7 +21,7 @@ function useDM(userInfo, to) {
     socket.on("token", ({ token, userId }) => {
       socket.auth = { ...socket.auth, token };
       socket.userId = userId;
-      localStorage.setItem("socketToken", token);
+      localStorage.setItem(`socketToken${userId}`, token);
     });
 
     socket.on("connect", () => {
@@ -30,7 +29,6 @@ function useDM(userInfo, to) {
         const existingUser = userListRef.current[i];
         if (existingUser.userId === userId) {
           existingUser.connect = true;
-          break;
         }
       }
     });
@@ -40,15 +38,8 @@ function useDM(userInfo, to) {
         const existingUser = userListRef.current[i];
         if (existingUser.userId === userId) {
           existingUser.connect = false;
-          break;
         }
       }
-    });
-
-    socket.on("token", ({ token, userId }) => {
-      socket.auth = { ...socket.auth, token };
-      socket.userId = userId;
-      localStorage.setItem("socketToken", token);
     });
 
     socket.on("user connected", (data) => {
@@ -62,22 +53,14 @@ function useDM(userInfo, to) {
       userListRef.current.push(data);
     });
 
-    socket.on("user disconnected", (data) => {
-      for (let i = 0; i < userListRef.current.length; i++) {
-        const existingUser = userListRef.current[i];
-        if (existingUser.userId === data) {
-          existingUser.connected = false;
-          return;
-        }
-      }
-    });
-
     socket.on("users", (data) => {
+      console.log(7777777777, data);
       data.forEach((serverUser) => {
         for (let i = 0; i < userListRef.current.length; i++) {
           const existingUser = userListRef.current[i];
           if (serverUser.userId === to) {
             setMsg(serverUser.messages);
+            console.log(msg);
           }
           if (existingUser.userId === serverUser.userId) {
             existingUser.connected = serverUser.connected;
@@ -87,6 +70,17 @@ function useDM(userInfo, to) {
         }
         userListRef.current.push(serverUser);
       });
+    });
+
+    socket.on("user disconnected", (data) => {
+      for (let i = 0; i < userListRef.current.length; i++) {
+        const existingUser = userListRef.current[i];
+        if (existingUser.userId === data) {
+          existingUser.connected = false;
+          return;
+        }
+      }
+      return;
     });
 
     socket.on("private message", (message) => {
@@ -112,16 +106,11 @@ function useDM(userInfo, to) {
     };
   }, [to]);
 
-  const findIdx = (to) => {
-    const idx = userListRef.current.findIndex((el) => el.userId === to);
-    console.log(userListRef.current[idx].messages);
-  };
-
   const privateMessageHandler = (msgData, to) => {
     setMsg((msg) => [...msg, { content: msgData, from: socket.userId, to }]);
     socket.emit("private message", { content: msgData, to });
   };
-  return { privateMessageHandler, userListRef, findIdx, msg };
+  return { privateMessageHandler, userListRef, msg };
 }
 
 export default useDM;
