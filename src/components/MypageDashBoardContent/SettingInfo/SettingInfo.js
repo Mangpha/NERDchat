@@ -55,12 +55,12 @@ function SettingInfo({ profileImg, setProfileImg }) {
     formData.append("password", pwd);
 
     //formData의 데이터 읽는 방법
-    // for (let key of formData.keys()) {
-    //   console.log(key);
-    // }
-    // for (let value of formData.values()) {
-    //   console.log(value);
-    // }
+    for (let key of formData.keys()) {
+      console.log(key);
+    }
+    for (let value of formData.values()) {
+      console.log(value);
+    }
 
     const res = await axios({
       method: "patch",
@@ -79,7 +79,7 @@ function SettingInfo({ profileImg, setProfileImg }) {
     //     "email": "123c9@naver.com",
     //     "status": null
     // }
-    // console.log(777777, res.data.data);
+    console.log(777777, res.data.data);
 
     //정보 쿠키에 반영하고, 저장해주는 것 필요.
     cookies.set("userInfo", res.data.data);
@@ -94,31 +94,12 @@ function SettingInfo({ profileImg, setProfileImg }) {
         <div className="setting-main-container">
           <div className="setting-main-content">
             <div className="setting-chat">
-              <form action="form__input" className="setting-form">
-                <label htmlFor="form__input" className="form__label">
-                  <input
-                    type="file"
-                    id="form__input"
-                    className="form__input"
-                    accept="image/*"
-                    name="pImage"
-                    onChange={imagehandler}
-                  />
-                  {/* <img
-                      src={require("../../images/dummy/icon.png").default}
-                      className="form__icon"
-                      alt=""
-                    /> */}
-                  <IoAttachOutline className="form__icon" />
-                  <span className="form__text">Choose a Photo</span>
-                </label>
-              </form>
-
               <form onSubmit={fixInfoHandler}>
                 <div className="setting-info">
                   <div className="setting-infomation">
                     <h2>INFORMATION</h2>
                   </div>
+
                   <div className="form">
                     <input
                       type="text"
@@ -185,6 +166,16 @@ function SettingInfo({ profileImg, setProfileImg }) {
                       Confrim Password
                     </label>
                   </div>
+                  <form action="form__input" className="setting-form">
+                    <input
+                      type="file"
+                      id="form__input"
+                      className="form__input"
+                      accept="image/*"
+                      name="pImage"
+                      onChange={imagehandler}
+                    />
+                  </form>
                   <button
                     type="submit"
                     className="setting-button"
