@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-import { IoChevronDownOutline, IoEllipseSharp } from "react-icons/io5";
+import { IoChevronForwardOutline } from "react-icons/io5";
 
 import OnlineUserDropDown from "./DropDown/OnlineUserDropDown";
 import socket from "../../../hooks/socket";
@@ -47,23 +47,12 @@ const OnlineUser = ({ avatar, nickname, messages, online, userInfo }) => {
   const clickHandler = () => {
     setLoader((prev) => !prev);
   };
-  //메시지 보내기
-  // const sendHandler = (e) => {
-  //   e.preventDefault();
-  //   socket.emit("private message", { content: e.target.value, to: nickname });
-  //   const incomingM = {
-  //     content: e.target.value,
-  //     from: userInfo.userId,
-  //     to: nickname,
-  //   };
-  //   setMsg((prev) => [...prev, incomingM]);
-  // };
+
   const backgroundCloseHandler = (e) => {
     if (dropRef.current === e.target) {
       setLoader(false);
     }
   };
-  console.log(2818893128918923, msg);
   return (
     <>
       <div
@@ -89,7 +78,7 @@ const OnlineUser = ({ avatar, nickname, messages, online, userInfo }) => {
           </div>
         </div>
         <div className="online__dropstart" onClick={clickHandler}>
-          <IoChevronDownOutline
+          <IoChevronForwardOutline
             size={15}
             className={loader ? "online__drop-click" : "online__drop"}
           />
@@ -101,7 +90,6 @@ const OnlineUser = ({ avatar, nickname, messages, online, userInfo }) => {
           nickname={nickname}
           messages={messages}
           msg={msg}
-          // sendHandler={sendHandler}
           setMsg={setMsg}
         />
       )}

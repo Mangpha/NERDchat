@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-import { IoChevronDownOutline, IoEllipseSharp } from "react-icons/io5";
+import { IoChevronForwardOutline, IoEllipseSharp } from "react-icons/io5";
 
 import DropDown from "./DropDown/DropDown";
 import socket from "../../../hooks/socket";
@@ -11,6 +11,7 @@ const FriendList = ({ avatar, nickname, messages, online, userInfo }) => {
   const [msg, setMsg] = useState({ data: {} });
   const dropRef = useRef();
 
+  //메시지 듣기
   useEffect(() => {
     socket.on(
       "private message",
@@ -79,7 +80,7 @@ const FriendList = ({ avatar, nickname, messages, online, userInfo }) => {
           </div>
         </div>
         <div className="friend__dropstart" onClick={clickHandler}>
-          <IoChevronDownOutline
+          <IoChevronForwardOutline
             size={15}
             className={loader ? "friend__drop-click" : "friend__drop"}
           />
