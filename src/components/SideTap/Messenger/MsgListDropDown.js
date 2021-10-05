@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useEffect } from "react";
 import {
   IoFingerPrintOutline,
   IoMailOpenOutline,
@@ -12,7 +12,16 @@ import Invite from "../../invite/Invite";
 import { Context } from "../../../context/ContextProvider";
 import "./MsgListDropDown.scss";
 
-const MsgListDropDown = ({ nickname, messages, userInfo, msg, setMsg }) => {
+const MsgListDropDown = ({
+  nickname,
+  messages,
+  userInfo,
+  msg,
+  setMsg,
+  userId,
+  backgroundCloseHandler,
+  readMsgHandler,
+}) => {
   const {
     userInfoModalHandler,
     userInfoModalOpen,
@@ -23,12 +32,25 @@ const MsgListDropDown = ({ nickname, messages, userInfo, msg, setMsg }) => {
     inviteModalOpen,
     inviteModalHandler,
   } = useContext(Context);
+  const dropdownRef = useRef();
+
+  useEffect(() => {
+    dropdownRef.current.focus();
+  }, [
+    userInfoModalOpen,
+    addFriendModalOpen,
+    privateModalOpen,
+    inviteModalOpen,
+  ]);
 
   const addUserModalHandler = () => {
     addFriendModalHandler();
   };
   const privateModalOpenHandler = () => {
+    //채팅창을 열고
     privateModalHandler();
+    //모두 읽음상태로 만들기
+    readMsgHandler(nickname);
   };
   const userInfoModalOpenHandler = () => {
     userInfoModalHandler();
@@ -38,20 +60,31 @@ const MsgListDropDown = ({ nickname, messages, userInfo, msg, setMsg }) => {
   };
 
   return (
-    <div className="msgList__wrapper">
+    <div
+      className="msgList__wrapper"
+      tabIndex={0}
+      ref={dropdownRef}
+      onBlur={backgroundCloseHandler}
+    >
       {privateModalOpen && (
         <PrivateMessageModal
           nickname={nickname}
           messages={messages}
-          msg={msg.data}
+          msg={msg ? msg.data : []}
           setMsg={setMsg}
           userInfo={userInfo}
+          readMsgHandler={readMsgHandler}
         />
       )}
       {userInfoModalOpen && <UserInfo nickname={nickname} />}
       {inviteModalOpen && <Invite nickname={nickname} userInfo={userInfo} />}
       {addFriendModalOpen && (
-        <UserAdd nickname={nickname} userInfo={userInfo} setMsg={setMsg} />
+        <UserAdd
+          nickname={nickname}
+          userId={userId}
+          setMsg={setMsg}
+          userInfo={userInfo}
+        />
       )}
       <ul className="msgList__menu">
         <li className="msgList__li">

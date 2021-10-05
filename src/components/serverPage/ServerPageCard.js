@@ -14,7 +14,7 @@ const ServerPageCard = ({ category, img, id, like }) => {
   const history = useHistory();
   const { loginModalOpen, loginmodalHandler } = useContext(Context);
   const [clicked, setClicked] = useState(false);
-
+  console.log(7777, category);
   const addBookmarkHandler = async (e) => {
     // e.preventDefault();
     e.stopPropagation();
@@ -58,7 +58,7 @@ const ServerPageCard = ({ category, img, id, like }) => {
               <p className="game__title">{category}</p>
             </div>
             <div className="game__server__content__container">
-              <p className="game__server__content">Into Server</p>
+              <p className="game__server__content">INTO SERVER</p>
               <div className="server__arrow">
                 <BsChevronDoubleDown size={20} />
               </div>
@@ -66,7 +66,7 @@ const ServerPageCard = ({ category, img, id, like }) => {
           </div>
           <div className="bookmark__container" onClick={addBookmarkHandler}>
             {clicked ? (
-              <IoBookmark size={25} color="rgb(184, 126, 255)" />
+              <IoBookmarkOutline size={20} className="bookclicked" />
             ) : (
               <Bookmark />
             )}

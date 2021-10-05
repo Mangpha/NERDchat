@@ -7,13 +7,12 @@ import "./UserAdd.scss";
 
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 
-const UserAdd = ({ nickname, userInfo, setMsg }) => {
+const UserAdd = ({ nickname, userId, setMsg, userInfo }) => {
   const { addFriendModalHandler, privateModalHandler } = useContext(Context);
 
   //친구초대 하기
   const okHandler = async () => {
-    addFriendModalHandler();
-    const res = await axios.get(`${ENDPOINT}/friends/send/${nickname}`, {
+    const res = await axios.get(`${ENDPOINT}/friends/send/${userId}`, {
       withCredentials: true,
     });
     //요청이 잘 보내짐.
@@ -28,7 +27,7 @@ const UserAdd = ({ nickname, userInfo, setMsg }) => {
 
     //본인의 메시지창에서도 보이도록, but without button
     const incomingM = {
-      content: `${userInfo.userId}님의 친구초대를 승락하시겠습니까?`,
+      content: `${userInfo.userId}님의 친구 초대를 승낙하시겠습니까?`,
       to: nickname,
       from: userInfo.userId,
       invite: -1,
@@ -36,28 +35,11 @@ const UserAdd = ({ nickname, userInfo, setMsg }) => {
     };
     //보내는사람 본인: userInfo.nickname;
     //받을 사람: nickname
-    setMsg((prev) => {
-      const temp = { ...prev.data };
-      if (!temp[userInfo.nickname]) {
-        temp[userInfo.nickname] = [incomingM];
-        if (!temp[nickname]) {
-          temp[nickname] = [incomingM];
-        } else {
-          temp[nickname].push(incomingM);
-        }
-        return { data: temp };
-      } else {
-        if (!temp[nickname]) {
-          temp[nickname] = [incomingM];
-        } else {
-          temp[nickname].push(incomingM);
-        }
-        temp[userInfo.nickname].push(incomingM);
 
-        return { data: temp };
-      }
-    });
-    //확인 할 수 있도록 모달창 열어주기?
+    setMsg(incomingM, userInfo.userId, nickname);
+    //친구요청 모달 확인 모달창 닫기
+    addFriendModalHandler();
+    //확인 할 수 있도록 모달창 열어주기
     privateModalHandler();
   };
 
@@ -69,7 +51,7 @@ const UserAdd = ({ nickname, userInfo, setMsg }) => {
   return (
     <Modal>
       <div className="adduser_container">
-        <div className="adduser_title">Do you want to add friends?</div>
+        <div className="adduser_title">Add friend?</div>
       </div>
       <div>
         <div className="adduser_container-btn">

@@ -9,7 +9,6 @@ const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 const PMessage = ({ message, userInfo, setMsg }) => {
   const { content, to, from, invite, friend } = message;
   let mine = from === userInfo.userId;
-  console.log(111, content, to, from, invite, friend, "mine? :", mine);
 
   let today = new Date();
   let time = today.getHours() + ":" + today.getMinutes();
@@ -21,7 +20,6 @@ const PMessage = ({ message, userInfo, setMsg }) => {
     const res = await axios.post(`${ENDPOINT}/friends/accept/${from}`, true, {
       withCredentials: true,
     });
-    console.log(222, res);
     socket.emit("private message", {
       content: `${from} 님의 친구 요청을 승낙하였습니다.`,
       to: from,
@@ -32,27 +30,7 @@ const PMessage = ({ message, userInfo, setMsg }) => {
       to: from,
     };
 
-    setMsg((prev) => {
-      const temp = { ...prev.data };
-      if (!temp[from]) {
-        temp[from] = [incomingM];
-        if (!temp[to]) {
-          temp[to] = [incomingM];
-        } else {
-          temp[to].push(incomingM);
-        }
-        return { data: temp };
-      } else {
-        if (!temp[to]) {
-          temp[to] = [incomingM];
-        } else {
-          temp[to].push(incomingM);
-        }
-        temp[from].push(incomingM);
-
-        return { data: temp };
-      }
-    });
+    setMsg(incomingM, userInfo.userId, from);
 
     e.preventDefault();
   };
@@ -62,7 +40,6 @@ const PMessage = ({ message, userInfo, setMsg }) => {
     const res = await axios.post(`${ENDPOINT}/friends/accept/${from}`, false, {
       withCredentials: true,
     });
-    console.log(res);
     socket.emit("private message", {
       content: `${from}님의 친구 요청을 거절 하였습니다.`,
       to: from,
@@ -73,27 +50,7 @@ const PMessage = ({ message, userInfo, setMsg }) => {
       to: from,
     };
     // setMsg((prev) => [...prev, incomingM]);
-    setMsg((prev) => {
-      const temp = { ...prev.data };
-      if (!temp[from]) {
-        temp[from] = [incomingM];
-        if (!temp[to]) {
-          temp[to] = [incomingM];
-        } else {
-          temp[to].push(incomingM);
-        }
-        return { data: temp };
-      } else {
-        if (!temp[to]) {
-          temp[to] = [incomingM];
-        } else {
-          temp[to].push(incomingM);
-        }
-        temp[from].push(incomingM);
-
-        return { data: temp };
-      }
-    });
+    setMsg(incomingM, userInfo.userId, from);
 
     e.preventDefault();
   };

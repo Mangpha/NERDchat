@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useEffect } from "react";
 
 import {
   IoFingerPrintOutline,
@@ -20,8 +20,10 @@ function OnlineUserDropDown({
   messages,
   userInfo,
   msg,
-  sendHandler,
+  userId,
   setMsg,
+  backgroundCloseHandler,
+  readMsgHandler,
 }) {
   const {
     userInfoModalHandler,
@@ -34,6 +36,16 @@ function OnlineUserDropDown({
     inviteModalHandler,
   } = useContext(Context);
 
+  const dropdownRef = useRef();
+
+  useEffect(() => {
+    dropdownRef.current.focus();
+  }, [
+    userInfoModalOpen,
+    addFriendModalOpen,
+    privateModalOpen,
+    inviteModalOpen,
+  ]);
   const addUserModalHandler = () => {
     addFriendModalHandler();
   };
@@ -46,12 +58,14 @@ function OnlineUserDropDown({
   const inviteModalOpenHandler = () => {
     inviteModalHandler();
   };
-  const sendInviteMsgHandler = (fuc) => {
-    fuc();
-  };
 
   return (
-    <div className="onlinelist__wrapper">
+    <div
+      className="onlinelist__wrapper"
+      tabIndex={0}
+      ref={dropdownRef}
+      onBlur={backgroundCloseHandler}
+    >
       {privateModalOpen && (
         <PrivateMessageModal
           userInfo={userInfo}
@@ -59,12 +73,18 @@ function OnlineUserDropDown({
           messages={messages}
           msg={msg.data}
           setMsg={setMsg}
+          readMsgHandler={readMsgHandler}
         />
       )}
       {userInfoModalOpen && <UserInfo nickname={nickname} />}
       {inviteModalOpen && <Invite nickname={nickname} userInfo={userInfo} />}
       {addFriendModalOpen && (
-        <UserAdd nickname={nickname} userInfo={userInfo} setMsg={setMsg} />
+        <UserAdd
+          nickname={nickname}
+          userInfo={userInfo}
+          setMsg={setMsg}
+          userId={userId}
+        />
       )}
       <ul className="onlinelist__menu">
         <li className="onlinelist__li">
