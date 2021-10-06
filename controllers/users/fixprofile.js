@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
     let { oauth, accessToken } = req.cookies;
     const origin = await Users.findOne({
       where: { email: userData.email, nickname: userData.nickname }
-    });
+    })
     if (password) {
       var newPassword = generatePassword(password);
     }
@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
       password: newPassword || origin.password,
       status: status || origin.status,
       oauth
-    };
+    }
     await Users.update({
       avatar: avatar || origin.avatar,
       nickname: nickname || origin.nickname,
@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
       where: {
         id: origin.id
       }
-    });
+      });
     if (oauth === 'none') accessToken = generateAccess(payload);
     res.cookie('accessToken', accessToken, { Domain: process.env.ORIGIN, httpOnly: true, expires: expireDate, sameSite: 'none', secure: true })
       .status(202).json({
