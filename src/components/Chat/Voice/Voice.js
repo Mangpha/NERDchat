@@ -1,30 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import useSocket from "../../../hooks/useSocket";
 import styled from "styled-components";
 import Peer from "simple-peer";
+
 import { Cookies } from "react-cookie";
 import { useParams } from "react-router-dom";
 
+import { ReactComponent as Glasses } from "../../../images/glasses.svg";
+import {
+  IoHeartCircleOutline,
+  IoChevronDownOutline,
+  IoMicOffOutline,
+  IoMicOutline,
+  IoOptionsOutline,
+  IoRepeatOutline,
+  IoArrowUndoOutline,
+  IoShareSocialOutline,
+} from "react-icons/io5";
+
 import "./Voice.scss";
 
-const Container = styled.div`
-  padding: 20px;
-  display: flex;
-  margin: auto;
-  flex-wrap: wrap;
-`;
-
 const StyledVideo = styled.video`
-  height: 100px;
-  width: 100px;
+  display: none;
 `;
 
 const Video = (props) => {
   const ref = useRef();
 
   useEffect(() => {
+    // console.log(props);
     props.peer.on("stream", (stream) => {
-      console.log("stream generated", stream);
+      // console.log("stream generated", stream);
       ref.current.srcObject = stream;
     });
   }, []);
@@ -41,19 +48,7 @@ function Voice() {
   const [peers, setPeers] = useState([]);
   const userAudio = useRef();
   const peersRef = useRef([]);
-
-  // const Audio = (props) => {
-  //   const userRef = useRef();
-  //   console.log("!!!!!!!!", props.peer);
-  //   useEffect(() => {
-  //     props.peer.on("stream", (stream) => {
-  //       console.log("stream generated", stream);
-  //       if (userRef.current !== null) userRef.current.srcObject = stream;
-  //     });
-  //   }, []);
-
-  //   return <video playsInline autoPlay ref={userRef} />;
-  // };
+  const [mute, setMute] = useState(false);
 
   const createPeer = (userToSignal, callerId, stream) => {
     const peer = new Peer({
@@ -82,9 +77,9 @@ function Voice() {
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({
-        video: false,
+        video: true,
         audio: {
-          echoCancellation: true,
+          echoCancellation: false,
         },
       })
       .then((stream) => {
@@ -135,23 +130,84 @@ function Voice() {
       peersRef.current = peers;
       setPeers(peer);
     });
-    socket.current.onAny((event, ...args) => {
-      console.log(event, args);
-    });
     return () => {
+      socket.current.off("allUsers");
+      socket.current.off("userJoin");
+      socket.current.off("receive return signal");
+      socket.current.off("user disconnected");
       socket.current.disconnect();
     };
   }, []);
 
+  const handleMute = () => {
+    userAudio.current.srcObject
+      .getAudioTracks()
+      .forEach((track) => (track.enabled = !track.enabled));
+    setMute(!mute);
+  };
+
   return (
-    <Container>
-      <StyledVideo muted ref={userAudio} autoPlay playsInline />
-      {peers.map((peer) => {
-        return <Video key={peer.peerId} peer={peer.peer} />;
-      })}
-    </Container>
+    <div className="mute__card-container">
+      <div className="mute__card">
+        <div className="mute__head">
+          <div className="mute__arrow">
+            <IoChevronDownOutline size={20} />
+          </div>
+          <div className="mute__text">NERD PLAYER</div>
+          <div className="mute__like">
+            <IoHeartCircleOutline size={20} />
+          </div>
+        </div>
+        <div className="mute__cover">
+          <div className="mute__app">
+            <Glasses width="230" height="230" className="mute__glasses" />
+          </div>
+        </div>
+        <div className="mute__des">
+          <p className="mute__album-title">WithCall</p>
+          <p className="mute__album-subtitle">YOUR FRIEND</p>
+        </div>
+        <div className="mute__progress">
+          <div className="mute__bg"></div>
+          <div className="mute__time"></div>
+          <div className="mute__times">
+            <div className="mute__time-current">2:02</div>
+            <div className="mute__time-end">4:05</div>
+          </div>
+        </div>
+        <div className="mute__menu">
+          <div className="mute__options">
+            <IoOptionsOutline size={20} />
+          </div>
+          <div className="mute__repeat">
+            <IoRepeatOutline size={20} />
+          </div>
+          <div onClick={handleMute} className="mute__play-pause">
+            {mute ? (
+              <IoMicOffOutline size={30} className="mute__play" />
+            ) : (
+              <IoMicOutline size={30} className="mute__pause" />
+            )}
+          </div>
+          <div className="mute__back">
+            <IoArrowUndoOutline size={20} />
+          </div>
+          <div className="mute__share">
+            <IoShareSocialOutline size={20} />
+          </div>
+        </div>
+      </div>
+      <div>
+        <StyledVideo muted ref={userAudio} autoPlay playsInline />
+        {peers
+          .filter((peer) => peer.peerId !== userInfo.userId)
+          .map((peer) => {
+            return <Video key={peer.peerId} peer={peer.peer} />;
+          })}
+        {/* <button onClick={handleMute}>{mute ? "unmute" : "mute"}</button> */}
+      </div>
+    </div>
   );
 }
 
 export default Voice;
-//
