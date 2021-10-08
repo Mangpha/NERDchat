@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useRef } from "react";
 import {
   IoFingerPrintOutline,
   IoMailOpenOutline,
@@ -13,7 +12,16 @@ import Invite from "../../../invite/Invite";
 import { Context } from "../../../../context/ContextProvider";
 import "./DropDown.scss";
 
-function DropDown({ nickname, userInfo, messages }) {
+function DropDown({
+  nickname,
+  messages,
+  userInfo,
+  msg,
+
+  setMsg,
+  backgroundCloseHandler,
+  readMsgHandler,
+}) {
   const {
     deleteFriendModalHandler,
     deleteFriendModalOpen,
@@ -24,7 +32,16 @@ function DropDown({ nickname, userInfo, messages }) {
     inviteModalOpen,
     inviteModalHandler,
   } = useContext(Context);
+  const dropdownRef = useRef();
 
+  useEffect(() => {
+    dropdownRef.current.focus();
+  }, [
+    userInfoModalOpen,
+    deleteFriendModalOpen,
+    privateModalOpen,
+    inviteModalOpen,
+  ]);
   const deleteModalHandler = () => {
     deleteFriendModalHandler();
   };
@@ -39,45 +56,57 @@ function DropDown({ nickname, userInfo, messages }) {
     inviteModalHandler();
   };
   return (
-    <div className="friendlist__wrapper">
+    <div
+      className="friendlist__wrapper"
+      tabIndex={0}
+      ref={dropdownRef}
+      onBlur={backgroundCloseHandler}
+    >
       {privateModalOpen && (
-        <PrivateMessageModal nickname={nickname} messages={messages} />
+        <PrivateMessageModal
+          nickname={nickname}
+          messages={messages}
+          msg={msg.data}
+          setMsg={setMsg}
+          userInfo={userInfo}
+          readMsgHandler={readMsgHandler}
+        />
       )}
       {userInfoModalOpen && <UserInfo nickname={nickname} />}
       {inviteModalOpen && <Invite nickname={nickname} userInfo={userInfo} />}
       {deleteFriendModalOpen && <UserDelete nickname={nickname} />}
       <ul className="friendlist__menu">
         <li className="friendlist__li">
-          <a className="friendlist__a" onClick={userInfoModalOpenHandler}>
+          <div className="friendList__a" onClick={userInfoModalOpenHandler}>
             <div className="friendlist__icon">
               <IoFingerPrintOutline className="icona" />
             </div>
             Info
-          </a>
+          </div>
         </li>
         <li className="friendlist__li">
-          <a onClick={privateModalOpenHandler}>
+          <div className="friendList__a" onClick={privateModalOpenHandler}>
             <div className="friendlist__icon">
               <IoMailOpenOutline className="icona" />
             </div>
-            Message
-          </a>
+            DM
+          </div>
         </li>
         <li className="friendlist__li">
-          <a onClick={inviteModalOpenHandler}>
+          <div className="friendList__a" onClick={inviteModalOpenHandler}>
             <div className="friendlist__icon">
               <IoNotificationsOutline className="icona" />
             </div>
             Invite
-          </a>
+          </div>
         </li>
         <li className="friendlist__li">
-          <a onClick={deleteModalHandler}>
+          <div className="friendList__a" onClick={deleteModalHandler}>
             <div className="friendlist__icon">
               <IoCutOutline className="icona" />
             </div>
             Delete
-          </a>
+          </div>
         </li>
       </ul>
     </div>

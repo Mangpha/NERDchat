@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Modal from "../../UI/modal/Modal";
 import axios from "axios";
 import socket from "../../hooks/socket";
@@ -7,44 +7,61 @@ import "./UserAdd.scss";
 
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 
-const UserAdd = ({ nickname, userInfo }) => {
+const UserAdd = ({ nickname, userId, setMsg, userInfo }) => {
+  const [err, setErr] = useState("");
   const { addFriendModalHandler, privateModalHandler } = useContext(Context);
 
   //친구초대 하기
   const okHandler = async () => {
-    addFriendModalHandler();
-    //nickname을 어떻게 받아올지가 문제, 아마 친구리스트에서 클릭할때 props로 내려주면 될듯?
-    const res = await axios.get(`${ENDPOINT}/friends/send/${nickname}`, {
+    const res = await axios.get(`${ENDPOINT}/friends/send/${userId}`, {
       withCredentials: true,
     });
-    console.log(777, res);
+    const exist = res.data.message;
+    if (exist) {
+      setErr(`${nickname} is already a friend.`);
+      return;
+    }
     //요청이 잘 보내짐.
-    //메시지 모달창을 열고, 친구초대 메시지를 보내자. 모달창 열 필요는 없을듯
+    //메시지 모달창을 열고, 친구초대 메시지를 보내자.
+    //모달창 열 필요는 없을듯
     socket.emit("private message", {
-      content: `${userInfo.userId}님의 친구초대를 승락하시겠습니까?`,
+      content: `${userInfo.userId} 님의 친구 초대를 승낙하시겠습니까?`,
       to: nickname,
       invite: -1,
       friend: 1,
     });
+
+    //본인의 메시지창에서도 보이도록, but without button
+    const incomingM = {
+      content: `${userInfo.userId}님의 친구 초대를 승낙하시겠습니까?`,
+      to: nickname,
+      from: userInfo.userId,
+      invite: -1,
+      friend: -1,
+    };
+    //보내는사람 본인: userInfo.nickname;
+    //받을 사람: nickname
+
+    setMsg(incomingM, userInfo.userId, nickname);
+    //친구요청 모달 확인 모달창 닫기
+    addFriendModalHandler();
+    //확인 할 수 있도록 모달창 열어주기
     privateModalHandler();
   };
 
   //취소
   const noHandler = async () => {
-    // const res = await axios.post(
-    //   `${ENDPOINT}friends/accept/${nickname}`,
-    //   { accept: false },
-    //   {
-    //     withCredentials: true,
-    //   }
-    // );
     addFriendModalHandler();
   };
 
   return (
     <Modal>
       <div className="adduser_container">
-        <div className="adduser_title">친구에 추가 하시겠습니까?</div>
+        {err.length === 0 ? (
+          <div className="adduser_title">Add friend?</div>
+        ) : (
+          <div className="adduser_title err">{err}</div>
+        )}
       </div>
       <div>
         <div className="adduser_container-btn">

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useEffect } from "react";
 import {
   IoFingerPrintOutline,
   IoMailOpenOutline,
@@ -12,7 +12,16 @@ import Invite from "../../invite/Invite";
 import { Context } from "../../../context/ContextProvider";
 import "./MsgListDropDown.scss";
 
-const MsgListDropDown = ({ nickname, messages, userInfo }) => {
+const MsgListDropDown = ({
+  nickname,
+  messages,
+  userInfo,
+  msg,
+  setMsg,
+  userId,
+  backgroundCloseHandler,
+  readMsgHandler,
+}) => {
   const {
     userInfoModalHandler,
     userInfoModalOpen,
@@ -23,12 +32,25 @@ const MsgListDropDown = ({ nickname, messages, userInfo }) => {
     inviteModalOpen,
     inviteModalHandler,
   } = useContext(Context);
+  const dropdownRef = useRef();
+
+  useEffect(() => {
+    dropdownRef.current.focus();
+  }, [
+    userInfoModalOpen,
+    addFriendModalOpen,
+    privateModalOpen,
+    inviteModalOpen,
+  ]);
 
   const addUserModalHandler = () => {
     addFriendModalHandler();
   };
   const privateModalOpenHandler = () => {
+    //채팅창을 열고
     privateModalHandler();
+    //모두 읽음상태로 만들기
+    readMsgHandler(nickname);
   };
   const userInfoModalOpenHandler = () => {
     userInfoModalHandler();
@@ -38,22 +60,41 @@ const MsgListDropDown = ({ nickname, messages, userInfo }) => {
   };
 
   return (
-    <div className="msgList__wrapper">
+    <div
+      className="msgList__wrapper"
+      tabIndex={0}
+      ref={dropdownRef}
+      onBlur={backgroundCloseHandler}
+    >
       {privateModalOpen && (
-        <PrivateMessageModal nickname={nickname} messages={messages} />
+        <PrivateMessageModal
+          nickname={nickname}
+          messages={messages}
+          msg={msg ? msg.data : []}
+          setMsg={setMsg}
+          userInfo={userInfo}
+          readMsgHandler={readMsgHandler}
+        />
       )}
       {userInfoModalOpen && <UserInfo nickname={nickname} />}
       {inviteModalOpen && <Invite nickname={nickname} userInfo={userInfo} />}
       {addFriendModalOpen && (
-        <UserAdd nickname={nickname} userInfo={userInfo} />
+        <UserAdd
+          nickname={nickname}
+          userId={userId}
+          setMsg={setMsg}
+          userInfo={userInfo}
+        />
       )}
       <ul className="msgList__menu">
         <li className="msgList__li">
-          <div className="msgList__a" onClick={userInfoModalOpenHandler}>
-            <div className="msgList__icon">
-              <IoFingerPrintOutline className="icona" />
+          <div>
+            <div className="msgList__a" onClick={userInfoModalOpenHandler}>
+              <div className="msgList__icon">
+                <IoFingerPrintOutline className="icona" />
+              </div>
+              Info
             </div>
-            Info
           </div>
         </li>
         <li className="msgList__li">
@@ -61,7 +102,7 @@ const MsgListDropDown = ({ nickname, messages, userInfo }) => {
             <div className="msgList__icon">
               <IoMailOpenOutline className="icona" />
             </div>
-            Message
+            DM
           </div>
         </li>
         <li className="msgList__li">

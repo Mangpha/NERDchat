@@ -1,13 +1,28 @@
-import React, { useState, useRef } from "react";
-
-import { IoChevronDownOutline, IoEllipseSharp } from "react-icons/io5";
-
+import React, { useState, useRef, useContext } from "react";
+import { IoChevronForwardOutline } from "react-icons/io5";
 import OnlineUserDropDown from "./DropDown/OnlineUserDropDown";
-
+import { Context } from "../../../context/ContextProvider";
 import "./OnlineUser.scss";
 
-const OnlineUser = ({ avatar, nickname, messages, online, userInfo }) => {
+const OnlineUser = ({
+  avatar,
+  nickname,
+  messages,
+  online,
+  userInfo,
+  userId,
+  readMsgHandler,
+  sendMsgHandler,
+  msg,
+}) => {
+  const {
+    userInfoModalOpen,
+    addFriendModalOpen,
+    privateModalOpen,
+    inviteModalOpen,
+  } = useContext(Context);
   const [loader, setLoader] = useState(false);
+
   const dropRef = useRef();
 
   const clickHandler = () => {
@@ -15,18 +30,18 @@ const OnlineUser = ({ avatar, nickname, messages, online, userInfo }) => {
   };
 
   const backgroundCloseHandler = (e) => {
-    if (dropRef.current === e.target) {
+    if (
+      !userInfoModalOpen &&
+      !addFriendModalOpen &&
+      !privateModalOpen &&
+      !inviteModalOpen
+    )
       setLoader(false);
-    }
   };
 
   return (
     <>
-      <div
-        className="online__container"
-        ref={dropRef}
-        onClick={backgroundCloseHandler}
-      >
+      <div className="online__container" ref={dropRef}>
         <div className="online__avatar-container">
           <img
             className="online__avatar"
@@ -45,7 +60,7 @@ const OnlineUser = ({ avatar, nickname, messages, online, userInfo }) => {
           </div>
         </div>
         <div className="online__dropstart" onClick={clickHandler}>
-          <IoChevronDownOutline
+          <IoChevronForwardOutline
             size={15}
             className={loader ? "online__drop-click" : "online__drop"}
           />
@@ -53,9 +68,14 @@ const OnlineUser = ({ avatar, nickname, messages, online, userInfo }) => {
       </div>
       {loader && (
         <OnlineUserDropDown
+          userInfo={userInfo}
           nickname={nickname}
           messages={messages}
-          userInfo={userInfo}
+          msg={msg}
+          setMsg={sendMsgHandler}
+          userId={userId}
+          backgroundCloseHandler={backgroundCloseHandler}
+          readMsgHandler={readMsgHandler}
         />
       )}
     </>

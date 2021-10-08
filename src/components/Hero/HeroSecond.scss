@@ -63,8 +63,9 @@
   font-weight: 100;
   color: rgb(216, 216, 216);
   font-size: 24px;
-  width: 600px;
-  margin-right: 250px;
+  width: 500px;
+  margin-right: 350px;
+  text-align: justify;
 }
 
 .text-ani .first:nth-child(2) {
@@ -128,5 +129,83 @@
     transition: all 0.2s ease-in-out;
     animation: flicker 2s linear infinite;
     text-shadow: 0 0 3px rgb(163, 16, 255);
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .herosec-container {
+    // border: 1px solid aqua;
+    width: 1400px;
+    height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    margin-left: 0;
+  }
+
+  .herosec-logoimage {
+    margin-left: 280px;
+    margin-top: 80px;
+  }
+
+  .text-container {
+    margin-top: 80px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .herosec-container {
+    // border: 1px solid aqua;
+    width: 768px;
+    height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    margin-left: 0;
+  }
+
+  .herosec-logoimage {
+    display: none;
+  }
+
+  .text-container {
+    display: flex;
+    width: 768px;
+    // border: 1px solid red;
+    margin-right: 0;
+  }
+  .text-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .text-ani {
+    text-align: left;
+    font-family: "Monoton", cursive;
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: rgb(172, 172, 172);
+    display: inline-block;
+    margin-right: 60px;
+    margin-top: 20px;
+  }
+
+  .sub-text {
+    text-align: justify;
+    font-family: "Poppins", sans-serif;
+    font-weight: 100;
+    width: 700px;
+    color: rgb(216, 216, 216);
+
+    .sub-text-h1 {
+      font-family: "Poppins", sans-serif;
+      font-weight: 100;
+
+      font-size: 17px;
+      width: 400px;
+      // border: 1px solid red;
+      align-items: center;
+      justify-content: center;
+      margin: 0 140px;
+    }
   }
 }
