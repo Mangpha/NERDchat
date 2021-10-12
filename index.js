@@ -17,7 +17,6 @@ const io = require('socket.io')(httpServer, {
     subClient: redisClient.duplicate()
   })
 });
-const { setupWorker } = require('@socket.io/sticky');
 
 const routes = require('./routes/index');
 const controller = require('./controllers/index');
@@ -32,6 +31,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.set('trust proxy', 1);
 
 app.get('/', (req, res) => res.send('Hello, world!!!!!!'));
 

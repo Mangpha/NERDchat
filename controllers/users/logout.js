@@ -1,5 +1,10 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 module.exports = (req, res) => {
   res.status(200)
-    .cookie('refreshToken', '', { sameSite: 'none', httpOnly: true, secure: true })
-    .cookie('accessToken', '', { sameSite: 'none', httpOnly: true, secure: true }).json({ isLogout: true });
+    .clearCookie('refreshToken')
+    .clearCookie('accessToken')
+    .clearCookie('oauth')
+    .json({ isLogout: true });
 };
