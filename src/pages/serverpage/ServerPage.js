@@ -1,8 +1,9 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import useLists from "../../hooks/useLists";
 import ServerPageCard from "../../components/serverPage/ServerPageCard";
 import NavBar from "../../components/NavBar/NavBar";
 import { Cookies } from "react-cookie";
+import Loader from "../../components/Loader/Loader";
 import "./ServerPage.scss";
 
 const ServerPage = () => {
@@ -13,8 +14,9 @@ const ServerPage = () => {
     "get",
     "/category/lists/"
   );
+  const userInfo = cookies.get("userInfo");
 
-  if (!cookies.get("userInfo")) {
+  if (!userInfo) {
     const randomNum = Math.floor(Math.random() * 10000);
     const userInfo = {
       id: randomNum,
@@ -24,6 +26,7 @@ const ServerPage = () => {
     };
     cookies.set("userInfo", userInfo);
   }
+
   // Infinite Scroll
   // 일반적인 useRef는 state가 아니기 때문에 컴포넌트가 변화할때마다 다시 렌더되지 못한다. 하지만, useCallback을 ref로 주게 되면,
   // 해당요소가 생성 될 때 마다 callback함수가 실행되게 된다.
@@ -55,41 +58,48 @@ const ServerPage = () => {
   // const Lists = [{ id: 1, category: 'diablo', image: 1, fav: 1 }, { id: 2, category: 'lol', image: 2, fav: 0 }, { id: 3, category: 'hothot3', image: 3, fav: 0 }, { id: 4, category: 'coolcool', image: 4, fav: 0 }, { id: 5, category: 'diablo', image: 1, fav: 0 }, { id: 6, category: 'lol', image: 2, fav: 1 }, { id: 7, category: 'hothot3', image: 3, fav: 0 }, { id: 8, category: 'coolcool', image: 4, fav: 1 }, { id: 9, category: 'diablo', image: 1, fav: 0 }, { id: 10, category: 'lol', image: 2, fav: 0 }, { id: 11, category: 'hothot3', image: 3, fav: 0 }, { id: 12, category: 'coolcool', image: 4, fav: 0 }, { id: 13, category: 'diablo', image: 1, fav: 0 }, { id: 14, category: 'lol', image: 2, fav: 1 }, { id: 15, category: 'hothot3', image: 3, fav: 0 }, { id: 16, category: 'coolcool', image: 4, fav: 0 }];
   // const loading = false;
 
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     setTimeout(() => {
+  //       setIsLoading(true);
+  //     }, 2000);
+  //   }
+  // }, [isLoading]);
+
+  // if (!isLoading) return <Spinner />;
+
   return (
-    <div class="server__list__container">
+    <div className="server__list__container">
       <NavBar />
-      <div className="big__container">
-        <div className="game__list__card__container">
-          {lists.map((list, idx) => {
-            // 해당 요소가 마지막 요소라면, ref붙여주기
-            if (lists.length === idx + 1) {
-              return (
-                <div ref={lastElementRef}>
-                  <ServerPageCard
-                    key={list.id}
-                    id={list.id}
-                    category={list.category}
-                    img={list.image}
-                    like={list.fav}
-                  />
-                </div>
-              );
-            } else {
-              return (
-                <div>
-                  <ServerPageCard
-                    key={list.id}
-                    id={list.id}
-                    category={list.category}
-                    img={list.image}
-                    like={list.fav}
-                  />
-                </div>
-              );
-            }
-          })}
-          <div>{loading && "loading..."}</div>
-        </div>
+      <div className="game__list__card__container">
+        {lists.map((list, idx) => {
+          // 해당 요소가 마지막 요소라면, ref붙여주기
+          if (lists.length === idx + 1) {
+            return (
+              <div ref={lastElementRef} key={list.category}>
+                <ServerPageCard
+                  id={list.id}
+                  category={list.category}
+                  img={list.image}
+                  like={list.fav}
+                />
+              </div>
+            );
+          } else {
+            return (
+              <div key={list.category}>
+                <ServerPageCard
+                  key={list.category}
+                  id={list.id}
+                  category={list.category}
+                  img={list.image}
+                  like={list.fav}
+                />
+              </div>
+            );
+          }
+        })}
+        <div>{loading && <Loader />}</div>
       </div>
     </div>
   );

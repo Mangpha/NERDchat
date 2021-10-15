@@ -13,8 +13,8 @@ const userInfoDefault = {
   userId: "",
   nickname: "",
   email: "",
-  oauth: "", // OAuth종류
-  status: "", // 상태메시지
+  oauth: "",
+  status: "",
 };
 
 const userReducer = (state, action) => {
@@ -28,7 +28,6 @@ const ContextProvider = ({ children }) => {
   const [friends, setFriends] = useState([]);
   const [userInfo, dispatchUserInfo] = useReducer(userReducer, userInfoDefault);
   // loginmodal state
-  const [isLogin, setIsLogin] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [deleteFriendModalOpen, setDeleteFriendModalOpen] = useState(false);
@@ -38,7 +37,6 @@ const ContextProvider = ({ children }) => {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
   const isLoginHandler = () => {
-    // logout은 false값 받아오기
     localStorage.setItem("nerd-logged-in", true);
   };
   const loginmodalHandler = () => {
@@ -68,10 +66,13 @@ const ContextProvider = ({ children }) => {
     const { id, avatar, userId, nickname, email, oauth, status } =
       cookieUserInfo;
     cookieUserInfo = { id, avatar, userId, nickname, email, oauth, status };
-    cookies.set("userInfo", cookieUserInfo);
+    cookies.set("userInfo", cookieUserInfo, {
+      domain: ".nerdchat.link",
+      sameSite: "none",
+      secure: true,
+    });
+
     dispatchUserInfo({ type: "GET", item: info });
-    // console.log('after dispatch',userInfo)
-    // setUserInfo(info)
   };
 
   const [createRoomOpen, setCreateRoomOpen] = useState(false);
@@ -81,13 +82,20 @@ const ContextProvider = ({ children }) => {
 
   // bookmark
   // friend lists
-  // server game lists
-  // login userInfo
-  // online user ->실시간 어떻게 구현하지...?
+  const getFriendsListHandler = async () => {
+    const res = await axios.get(`${ENDPOINT}/friends/lists`, {
+      withCredentials: true,
+    });
+    setFriends(res.data.data);
+  };
+  useEffect(() => {
+    if (localStorage.getItem("nerd-logged-in")) {
+      getFriendsListHandler();
+    }
+  }, [userInfo]);
   return (
     <Context.Provider
       value={{
-        // isLogin,
         loginModalOpen,
         loginmodalHandler,
         getUserInfo,

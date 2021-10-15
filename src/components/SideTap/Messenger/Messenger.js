@@ -1,19 +1,59 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import MsgListDropDown from "./MsgListDropDown";
-
 import "./Messenger.scss";
+import { Context } from "../../../context/ContextProvider";
 
-const Messenger = ({ avatar, nickname, messages, userInfo }) => {
+const Messenger = ({
+  avatar,
+  nickname,
+  messages,
+  userInfo,
+  online,
+  userId,
+  sendMsgHandler,
+  lastMsg,
+  readHandler,
+}) => {
+  const {
+    userInfoModalOpen,
+    addFriendModalOpen,
+    privateModalOpen,
+    inviteModalOpen,
+  } = useContext(Context);
   const [modalOpen, setModalOpen] = useState(false);
-  //문제는 각각의 Messenger들은 개별적인 컴포넌트이긴 하지만,
-  //현재 Messenger컴포넌트가 열려있는 상황(메신저 탭이 선택된 상황)에서 상태값이 변경되게 되면,
-  //모든 Messenger컴포넌트에서 모달이 열려버리게 된다.
+
   const modalHandler = () => {
     setModalOpen((prev) => !prev);
   };
+  const backgroundCloseHandler = (e) => {
+    if (
+      !userInfoModalOpen &&
+      !addFriendModalOpen &&
+      !privateModalOpen &&
+      !inviteModalOpen
+    )
+      setModalOpen(false);
+  };
+  const hasLastMsg = {};
+  lastMsg.forEach((m, idx) => {
+    if (m.nickname === nickname) {
+      hasLastMsg.value = true;
+      hasLastMsg.index = idx;
+    }
+  });
   return (
     <>
-      <div className="messagelist" onClick={modalHandler}>
+      <div
+        className={online ? "messagelist" : "messagelist offline"}
+        onClick={modalHandler}
+      >
+        <div
+          className={
+            hasLastMsg.value && !lastMsg[hasLastMsg.index].read
+              ? "new__msg__alarm"
+              : "no__alarm"
+          }
+        ></div>
         <div className="userInfo__container">
           <div className="m__avatar__container">
             <img
@@ -32,7 +72,7 @@ const Messenger = ({ avatar, nickname, messages, userInfo }) => {
             <p>{nickname}</p>
           </div>
           <div className="latest__message__content">
-            {/* {msg[msg.length - 1].content} */}
+            <div>{messages[messages.length - 1].content}</div>
           </div>
         </div>
       </div>
@@ -41,6 +81,10 @@ const Messenger = ({ avatar, nickname, messages, userInfo }) => {
           userInfo={userInfo}
           nickname={nickname}
           messages={messages}
+          userId={userId}
+          setMsg={sendMsgHandler}
+          backgroundCloseHandler={backgroundCloseHandler}
+          readHandler={readHandler}
         />
       )}
     </>

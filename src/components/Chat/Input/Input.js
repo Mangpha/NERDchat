@@ -8,7 +8,7 @@ function Input({ msgInputHandler, newMsg, sendHandler }) {
       <input
         className="input_input"
         type="text"
-        placeholder="Type a message.."
+        placeholder="Type a message!"
         value={newMsg}
         onChange={msgInputHandler}
         onKeyPress={(event) =>
@@ -16,7 +16,7 @@ function Input({ msgInputHandler, newMsg, sendHandler }) {
         }
       />
       <button className="input_sendButton" onClick={sendHandler}>
-        <IoIosPaperPlane size={25} />
+        <IoIosPaperPlane size={30} />
       </button>
     </form>
   );

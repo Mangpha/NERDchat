@@ -7,15 +7,22 @@ $title: rgb(172, 172, 172);
 
 .friendlist__wrapper {
   position: absolute;
-  width: 150px;
+  width: 120px;
   background: rgba(77, 77, 77, 0.243);
   backdrop-filter: blur(0.5em);
-  margin-left: 150px;
-
+  margin-left: 230px;
+  margin-top: -50px;
   border-radius: 5px;
   z-index: 1;
-
-  ul li a {
+  :focus {
+    outline: none;
+  }
+  .friendlist__menu {
+    :focus {
+      outline: none;
+    }
+  }
+  ul li .friendList__a {
     text-decoration: none;
     color: rgb(172, 172, 172);
     list-style: none;
@@ -32,7 +39,7 @@ $title: rgb(172, 172, 172);
 }
 .friendlist__menu {
   list-style: none;
-  width: 150px;
+  width: 120px;
 
   .friendlist__li {
     line-height: 55px;
@@ -40,7 +47,7 @@ $title: rgb(172, 172, 172);
   }
 
   .friendlist__li:hover {
-    background: rgba(12, 12, 12, 0.277);
+    // background: rgba(12, 12, 12, 0.277);
     border-radius: 5px;
 
     .icona {
@@ -49,20 +56,6 @@ $title: rgb(172, 172, 172);
     }
   }
 }
-
-// .friendlist__name {
-//   width: 400px;
-//   padding: 0 10px;
-//   color: rgb(172, 172, 172);
-//   border-radius: 5px;
-//   line-height: 50px;
-//   font-size: 20px;
-//   font-family: "Poppins", sans-serif;
-//   font-weight: 100;
-//   display: flex;
-//   flex-direction: row;
-//   align-items: center;
-// }
 
 .friendlist__icon {
   height: 40px;
@@ -74,4 +67,17 @@ $title: rgb(172, 172, 172);
   text-align: center;
   background: rgba(12, 12, 12, 0.277);
   border-radius: 50%;
+}
+.friendlist__wrapper::before {
+  position: absolute;
+  content: "";
+  top: 17px;
+  left: -13px;
+  transform: rotate((0deg));
+  z-index: -1;
+  width: 0px;
+  height: 0px;
+  border-top: 8px solid transparent;
+  border-right: 13px solid rgba(77, 77, 77, 0.243);
+  border-bottom: 8px solid transparent;
 }

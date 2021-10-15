@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import "./ServerRoomCard.scss";
-import { BsFillMicFill } from "react-icons/bs";
+import { IoMicOutline } from "react-icons/io5";
 import { useHistory } from "react-router-dom";
 import { Context } from "../../../context/ContextProvider";
 
-const ServerRoomCard = ({ gameId, id, roomTitle, uuid, max, loading, len }) => {
+const ServerRoomCard = ({ gameId, id, roomTitle, uuid, max, len }) => {
   const { loginmodalHandler } = useContext(Context);
   const history = useHistory();
   const getIntoServer = () => {
@@ -12,17 +12,20 @@ const ServerRoomCard = ({ gameId, id, roomTitle, uuid, max, loading, len }) => {
       loginmodalHandler();
       return;
     }
-    const path = `/gameId=${gameId}/roomId=${uuid}/chatId=${id}`;
-    history.push(path);
+    const path = `/gameId=${gameId}/roomId=${uuid}/chatId=${roomTitle}`;
+    history.push({
+      pathname: path,
+      state: { roomTitle },
+    });
   };
   return (
-    <div onClick={getIntoServer}>
+    <div onClick={getIntoServer} className="room__card">
       <div className="room__card__container">
         <div className="room__title" text-attr={roomTitle}>
           <span>{roomTitle}</span>
         </div>
         <div className="room__capacity">
-          {len}/{max} <BsFillMicFill />
+          {len}/{max} <IoMicOutline size={20} />
         </div>
       </div>
     </div>

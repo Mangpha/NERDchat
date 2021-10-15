@@ -1,21 +1,26 @@
-import React, { useContext } from "react";
-
+import React, { useContext, useRef, useEffect } from "react";
 import {
   IoFingerPrintOutline,
   IoMailOpenOutline,
   IoNotificationsOutline,
   IoAddOutline,
 } from "react-icons/io5";
-
 import PrivateMessageModal from "../../../PrivateMessageModal/PrivateMessageModal";
-import { useParams } from "react-router-dom";
 import UserAdd from "../../../friend/UserAdd";
 import UserInfo from "../../../userInfo/UserInfo";
 import Invite from "../../../invite/Invite";
 import { Context } from "../../../../context/ContextProvider";
 import "./OnlineUserDropDown.scss";
 
-function OnlineUserDropDown({ nickname, messages, userInfo }) {
+function OnlineUserDropDown({
+  nickname,
+  messages,
+  userInfo,
+  userId,
+  setMsg,
+  backgroundCloseHandler,
+  readHandler,
+}) {
   const {
     userInfoModalHandler,
     userInfoModalOpen,
@@ -27,6 +32,16 @@ function OnlineUserDropDown({ nickname, messages, userInfo }) {
     inviteModalHandler,
   } = useContext(Context);
 
+  const dropdownRef = useRef();
+
+  useEffect(() => {
+    dropdownRef.current.focus();
+  }, [
+    userInfoModalOpen,
+    addFriendModalOpen,
+    privateModalOpen,
+    inviteModalOpen,
+  ]);
   const addUserModalHandler = () => {
     addFriendModalHandler();
   };
@@ -41,14 +56,30 @@ function OnlineUserDropDown({ nickname, messages, userInfo }) {
   };
 
   return (
-    <div className="onlinelist__wrapper">
+    <div
+      className="onlinelist__wrapper"
+      tabIndex={0}
+      ref={dropdownRef}
+      onBlur={backgroundCloseHandler}
+    >
       {privateModalOpen && (
-        <PrivateMessageModal nickname={nickname} messages={messages} />
+        <PrivateMessageModal
+          userInfo={userInfo}
+          nickname={nickname}
+          messages={messages}
+          setMsg={setMsg}
+          readHandler={readHandler}
+        />
       )}
       {userInfoModalOpen && <UserInfo nickname={nickname} />}
       {inviteModalOpen && <Invite nickname={nickname} userInfo={userInfo} />}
       {addFriendModalOpen && (
-        <UserAdd nickname={nickname} userInfo={userInfo} />
+        <UserAdd
+          nickname={nickname}
+          userInfo={userInfo}
+          setMsg={setMsg}
+          userId={userId}
+        />
       )}
       <ul className="onlinelist__menu">
         <li className="onlinelist__li">
@@ -64,7 +95,7 @@ function OnlineUserDropDown({ nickname, messages, userInfo }) {
             <div className="onlinelist__icon">
               <IoMailOpenOutline className="icona" />
             </div>
-            Message
+            DM
           </div>
         </li>
         <li className="onlinelist__li">

@@ -16,7 +16,7 @@ const RoomSetting = () => {
   const [headCount, setHeadCount] = useState(0);
   const [title, setTitle] = useState("");
   const [err, setErr] = useState("");
-  const [loading, setLoading] = useState("false");
+  const [loading, setLoading] = useState(false);
 
   const titleHandler = (e) => {
     setTitle(e.target.value);
@@ -26,11 +26,11 @@ const RoomSetting = () => {
   };
   const submitHandler = async (e) => {
     e.preventDefault();
-
+    setLoading(false);
     if (title.trim().length <= 2) {
-      setErr("Room Title should be longer than 2 letters");
+      setErr("Room Title should be longer than 2 letters.");
     } else if (headCount < 2) {
-      setErr("HeadCount should be bigger than 2");
+      setErr("HeadCount should be bigger than 2.");
     }
 
     const chatId = 1;
@@ -41,11 +41,15 @@ const RoomSetting = () => {
         { withCredentials: true }
       );
       const { uuid, gameId } = res.data.data;
-
+      setLoading(true);
       createRoomModalHandler();
       // chatroom안으로 리 다이렉트 시키기.
       // chatId 달라고 하기.
-      history.push(`/gameId=${gameId}/roomId=${uuid}/chatId=${chatId}`);
+      const path = `/gameId=${gameId}/roomId=${uuid}/chatId=${title}`;
+      history.push({
+        pathname: path,
+        state: { roomTitle: title },
+      });
     }
   };
 
@@ -69,18 +73,23 @@ const RoomSetting = () => {
             <div>
               <label htmlFor="members">Max HeadCount</label>
             </div>
-            <div className="headcount__input__container">
-              <input
-                value={headCount}
-                step="1"
-                id="members"
-                type="range"
-                min="0"
-                max="6"
-                placeholder="put room title"
-                onChange={handleMembers}
-              />
-              <p>{headCount} 명</p>
+            <div className="middles">
+              <div className="headcount__input__container">
+                <span className="bars">
+                  <span className="fills"></span>
+                </span>
+                <input
+                  id="sliders"
+                  className="sliders"
+                  type="range"
+                  min="0"
+                  max="6"
+                  onChange={handleMembers}
+                  value={headCount}
+                  step="1"
+                />
+                <p>{headCount} 명</p>
+              </div>
             </div>
           </div>
           <div className="room__err__container">
